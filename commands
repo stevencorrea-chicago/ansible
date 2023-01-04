@@ -9,3 +9,7 @@ git push origin main
 
 [Copy ssh key to remote server]
 ssh-copy-id -i ~/.ssh/ansible.pub 192.168.122.14
+
+[Other commands]
+sudo apt update
+sudo apt dist-upgrade
