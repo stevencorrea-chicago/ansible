@@ -1,4 +1,6 @@
 ansible all --key-file ~/.ssh/ansible -i inventory -m ping
+ansible all -m gather_facts
+
 git status
 git add *
 git add <filename>
