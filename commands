@@ -1,0 +1,6 @@
+ansible all --key-file ~/.ssh/ansible -i inventory -m ping
+git status
+git add *
+git add <filename>
+git commit -m "<commit message>"
+git push origin main
