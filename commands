@@ -13,6 +13,19 @@ git add <filename>
 git commit -m "<commit message>"
 git push origin main
 
+git remote -v show
+origin	git@github.com:stevencorrea-chicago/ansible.git (fetch)
+origin	git@github.com:stevencorrea-chicago/ansible.git (push)
+
+Take a look at your commit graph, which will show you where all your references are (--decorate)
+$ git log --oneline --graph --all --decorate
+
+# Sometimes we need to know which files will be pulled to our working tree from the remote repository. To do that just run:
+# The git fetch command will fetch all changes that happened in the origin. 
+# And the git diff will show us the differents files between our working tree and the remote.
+
+git fetch origin ; git diff --name-only master origin/master 
+
 [Copy ssh key to remote server]
 ssh-copy-id -i ~/.ssh/ansible.pub 192.168.122.14
 
