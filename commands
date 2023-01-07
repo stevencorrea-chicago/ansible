@@ -20,6 +20,12 @@ origin	git@github.com:stevencorrea-chicago/ansible.git (push)
 Take a look at your commit graph, which will show you where all your references are (--decorate)
 $ git log --oneline --graph --all --decorate
 
+# To see the difference between a change file and the previous LOCAL version, run: 
+git diff inventory
+
+# To restore a file to its previous sate, run:
+git restore inventory
+
 # Sometimes we need to know which files will be pulled to our working tree from the remote repository. To do that just run:
 # The git fetch command will fetch all changes that happened in the origin. 
 # And the git diff will show us the differents files between our working tree and the remote.
