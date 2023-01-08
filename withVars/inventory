@@ -1,6 +1,5 @@
-192.168.122.14 apache_package=apache2 php_package=libapache2-mod-php
-192.168.122.212 apache_package=apache2 php_package=libapache2-mod-php
-# The following line was completed for the learnLinux - Ansible traning.
-# The line assume the instance below is a CentOS machine which would have
-# different package names for the same applications installed on Ubuntu
-# 192.168.122.1 apache_package=httpd php_package=php
+[vm1_server]
+192.168.122.14
+
+[vm2_server] 
+192.168.122.212 

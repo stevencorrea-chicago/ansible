@@ -1,0 +1,54 @@
+---
+# The when condition was added to account for servers that
+# such as CenOS or Windows machines that do not use 
+# apt has its packaging tool.
+
+- hosts: all
+  become: true
+  pre_tasks:
+
+  - name: install updates
+    apt:
+      upgrade: dist
+      update_cache: yes
+    when: ansible_distribution == "Ubuntu"
+
+- hosts: vm1_server
+  become: true
+  tasks:
+
+  - name: remove apache and php package
+    package:
+      name:
+        - apache2
+        - libapache2-mod-php
+      state: absent
+      purge: yes
+
+- hosts: vm2_server
+  become: true
+  tasks:
+
+  - name: remove googler
+    package:
+      name:
+        - googler
+      state: absent
+
+  - name: remove musikcube with snap
+    community.general.snap:
+      name:
+        - musikcube
+      state: absent
+
+- hosts: all
+  become: true
+  tasks:
+
+  - name: install updates
+    apt:
+      upgrade: dist
+      update_cache: yes
+      autoremove: yes
+      purge: true
+    when: ansible_distribution == "Ubuntu"
