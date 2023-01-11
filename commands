@@ -5,6 +5,7 @@ ansible all -m apt -a name=vim-nox --become --ask-become-pass
 ansible all -m apt -a "name=snapd state=latest" --become --ask-become-pass
 ansible all -m apt -a "upgrade=dist" --become --ask-become-pass
 ansible-playbook --ask-become-pass install_apache.yml
+ansible-playbook --list-tags install_apps_targeted_servers.yml
 ansible localhost -m gather_facts
 
 git status
@@ -38,3 +39,72 @@ ssh-copy-id -i ~/.ssh/ansible.pub 192.168.122.14
 [Other commands]
 sudo apt update
 sudo apt dist-upgrade
+
+[Network settings]
+Change ipaddresses for VMs
+https://www.cyberciti.biz/faq/linux-kvm-libvirt-dnsmasq-dhcp-static-ip-address-configuration-for-guest-os/
+
+
+Type the following command to list networks
+# virsh net-list
+
+Sample outputs:
+
+ Name                 State      Autostart     Persistent
+----------------------------------------------------------
+ default              active     yes           yes
+
+To see the default network information, enter:
+# virsh net-dumpxml default
+
+First find out your guest VM’s MAC addresses, enter:
+# virsh dumpxml {VM-NAME-HERE} | grep -i '<mac'
+# virsh dumpxml xenial | grep -i '<mac'
+
+Sample outputs:
+
+<mac address='52:54:00:4c:40:1c'/>
+
+Please note down the MAC addresses of the xenial VM that you want to assign static IP addresses.
+
+Edit the default network
+Type the following command:
+# virsh net-edit default
+
+Find the following section:
+
+ <dhcp>
+      <range start='192.168.122.100' end='192.168.122.254'/>
+Append the static IP as follows after range:
+
+     <host mac='52:54:00:4c:40:1c' name='xenial' ip='192.168.122.4'/>
+Sample outputs:
+
+<mac address='52:54:00:4c:40:1c'/>
+
+Here is my complete file with three static DHCP entries for three VMs:
+
+<network>
+  <name>default</name>
+  <uuid>e346291e-f86b-4f2f-a16e-654136441805</uuid>
+  <forward mode='nat'/>
+  <bridge name='virbr0' stp='on' delay='0'/>
+  <mac address='52:54:00:12:fe:35'/>
+  <ip address='192.168.122.1' netmask='255.255.255.0'>
+    <dhcp>
+      <range start='192.168.122.100' end='192.168.122.254'/>
+      <host mac='52:54:00:a0:cc:19' name='centos7' ip='192.168.122.2'/>
+      <host mac='52:54:00:f7:a1:c8' name='puffy' ip='192.168.122.3'/>
+      <host mac='52:54:00:4c:40:1c' name='xenial' ip='192.168.122.4'/>
+    </dhcp>
+  </ip>
+</network>
+
+Restart DHCP service:
+# virsh net-destroy default
+# virsh net-start default
+
+Sample outputs:
+
+Network default destroyed
+Network default started
