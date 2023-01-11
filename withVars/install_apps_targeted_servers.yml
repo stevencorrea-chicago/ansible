@@ -7,13 +7,22 @@
   become: true
   pre_tasks:
 
-  - name: install updates
+  - name: insall updates (CentOS)
+    tags: always
+    yum:
+      update_only: yes
+      update_cache: yes
+    when: ansible_distribution == "CentOS"
+
+  - name: install updates (Ubuntu)
+    tags: always
     apt:
       upgrade: dist
       update_cache: yes
     when: ansible_distribution == "Ubuntu"
 
 - hosts: vm1_server
+  tags: apache,apache2,ubuntu
   become: true
   tasks:
 
@@ -26,6 +35,7 @@
       purge: yes
 
 - hosts: vm2_server
+  tags: apache,apache2,ubuntu
   become: true
   tasks:
 
@@ -43,14 +53,36 @@
       state: present
       channel: latest
 
-- hosts: all
+- hosts: vm3_server
+  tags: apache,apache2,ubuntu
   become: true
   tasks:
 
-  - name: install updates
+  - name: install apache and php package for CentOS servers
+    tags: apache,centos,httpd
+    yum:
+      name:
+        - httpd
+        - php
+      state: latest
+    when: ansible_distribution == "CentOS"
+
+- hosts: all
+  tags: always
+  become: true
+  tasks:
+
+  - name: install updates (Ubuntu)
     apt:
       upgrade: dist
       update_cache: yes
       autoremove: yes
       purge: true
     when: ansible_distribution == "Ubuntu"
+
+  - name: install updates (CentOS)
+    yum:
+      update_only: yes
+      update_cache: yes
+      autoremove: yes
+    when: ansible_distribution == "CentOS"
