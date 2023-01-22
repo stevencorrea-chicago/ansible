@@ -1,0 +1,44 @@
+---
+# The when condition was added to account for servers that
+# such as CenOS or Windows machines that do not use 
+# apt has its packaging tool.
+
+- hosts: all
+  become: true
+  pre_tasks:
+  - name: install updates (CentOS)
+    yum:
+      update_only: yes
+      update_cache: yes
+    when: ansible_distribution == "CentOS"
+
+  - name: install updates (Ubuntu)
+    apt:
+      upgrade: dist
+      update_cache: yes
+    when: ansible_distribution == "Ubuntu"
+
+- hosts: Ubuntu_servers
+  become: true
+  tasks:
+  - name: remove apache, php and tree for Ubuntu servers
+    apt:
+      name:
+        - apache2
+        - libapache2-mod-php
+        - tree
+      state: absent
+      update_cache: yes
+    when: ansible_distribution == "Ubuntu"
+
+- hosts: Centos_servers
+  become: true
+  tasks:
+  - name: remove apache, php and tree for CentOS servers
+    yum:
+      name:
+        - httpd
+        - php
+        - tree
+      state: absent
+    when: ansible_distribution == "CentOS"
