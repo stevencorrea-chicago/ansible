@@ -7,6 +7,11 @@
   become: true
   pre_tasks:
 
+  - name: update repository index for Ubuntu
+    apt:
+      update_cache: yes
+    when: ansible_distrubtion_version == "Ubuntu"
+
   - name: install updates (CentOS)
     tags: always
     yum:
