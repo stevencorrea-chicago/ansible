@@ -19,33 +19,10 @@
 #      purge: yes
 #    when: ansible_distribution == "Ubuntu"
 
-  - name: install apache2 and php package on Ubuntu
-    apt:
+  - name: install apache and php
+    package:
       name:
-        - apache2
-        - libapache2-mod-php
+        - "{{ apache_package }}"
+        - "{{ php_package }}"
       state: latest
       update_cache: yes
-      autoremove: yes
-      purge: yes
-    when: ansible_distribution == "Ubuntu"
-
-  - name: update repository index for Ubuntu
-    apt:
-      upgrade: dist
-    when: ansible_distribution == "Ubuntu"
-
-  - name: install apache2 and php package on CentOS
-    yum:
-      name:
-        - httpd
-        - php
-      state: latest
-      update_cache: yes
-    when: ansible_distribution == "CentOS"
-
-  - name: update repository index for CentOS
-    yum:
-      update_cache: yes
-    when: ansible_distribution == "CentOS"
-
