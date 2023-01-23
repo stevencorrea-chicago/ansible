@@ -20,7 +20,7 @@
 - hosts: Ubuntu_servers
   become: true
   tasks:
-  - name: install apache2, php, tree, htop for Ubuntu servers
+  - name: remove apache2, php, tree, htop for Ubuntu servers
     tags: ubuntu_servers,ubuntu_apps
     apt:
       name:
@@ -28,14 +28,12 @@
         - libapache2-mod-php
         - tree
         - htop
-      state: latest
-      update_cache: yes
-    when: ansible_distribution == "Ubuntu"
+      state: absent
 
 - hosts: Centos_servers
   become: true
   tasks:
-  - name: install apache, php, tree, epel-release for CentOS servers
+  - name: remove apache, php, tree, epel-release for CentOS servers
     tags: centos_servers,centos_apps
     yum:
       name:
@@ -43,40 +41,11 @@
         - php
         - tree
         - epel-release
-      state: latest
+      state: absent
 
-  - name: make sure httpd service is running
-    tags: centos_servers,centos_apps
-    ansible.builtin.systemd:
-      state: started
-      name: httpd
-      enabled: yes
-      masked: no
-
-  - name: open firewall
-    tags: centos_servers,centos_apps
-    shell: firewall-cmd --add-service=http --permanent
-
-  - name: restart firewall
-    tags: centos_servers,centos_apps
-    shell: firewall-cmd --reload
-
-  - name: install htop for CentOS servers
+  - name: remove htop for CentOS servers
     tags: centos_servers,centos_apps
     yum:
       name:
         - htop
-      state: latest
-
-- hosts: all
-  become: true
-  tasks:
-  - name: copy default html file for site
-    tags: centos_servers,centos_apps
-    copy:
-      # The files directory is assumed. Look at ansible documenation to understand that assumption.
-      src: default_site.html
-      dest: /var/www/html/index.html
-      owner: root
-      group: root
-      mode: 0644
+      state: absent
