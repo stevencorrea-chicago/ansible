@@ -1,18 +1,17 @@
 ---
-# The when condition was added to account for servers that
-# such as CenOS or Windows machines that do not use 
-# apt has its packaging tool.
 
 - hosts: all
   become: true
   pre_tasks:
   - name: install updates (CentOS)
+    tags: always
     yum:
       update_only: yes
       update_cache: yes
     when: ansible_distribution == "CentOS"
 
   - name: install updates (Ubuntu)
+    tags: always
     apt:
       upgrade: dist
       update_cache: yes
@@ -22,11 +21,13 @@
   become: true
   tasks:
   - name: install apache and php for Ubuntu servers
+    tags: ubuntu_servers,ubuntu_apps
     apt:
       name:
         - apache2
         - libapache2-mod-php
         - tree
+        - htop
       state: latest
       update_cache: yes
     when: ansible_distribution == "Ubuntu"
@@ -34,11 +35,21 @@
 - hosts: Centos_servers
   become: true
   tasks:
-  - name: install apache and php for CentOS servers
+  - name: install apache, php, tree, epel-release for CentOS servers
+    tags: centos_servers,centos_apps
     yum:
       name:
         - httpd
         - php
         - tree
+        - epel-release
+      state: latest
+    when: ansible_distribution == "CentOS"
+
+  - name: install htop for CentOS servers
+    tags: centos_servers,centos_apps
+    yum:
+      name:
+        - htop
       state: latest
     when: ansible_distribution == "CentOS"
