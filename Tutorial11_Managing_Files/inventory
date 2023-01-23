@@ -4,3 +4,6 @@
 
 [Centos_servers]
 192.168.122.146
+
+[Workstations]
+192.168.122.100

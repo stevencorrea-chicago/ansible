@@ -30,7 +30,6 @@
         - htop
       state: latest
       update_cache: yes
-    when: ansible_distribution == "Ubuntu"
 
 - hosts: Centos_servers
   become: true
@@ -80,3 +79,15 @@
       owner: root
       group: root
       mode: 0644
+
+- hosts: Workstations
+  become: true
+  tasks:
+  - name: install terraform
+    unarchive:
+      src: https://releases.hashicorp.com/terraform/1.2.9/terraform_1.2.9_linux_amd64.zip
+      dest: /usr/local/bin
+      remote_src: yes
+      mode: 0755
+      owner: root
+      group: root
