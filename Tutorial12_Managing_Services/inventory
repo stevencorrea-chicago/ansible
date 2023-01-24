@@ -5,3 +5,5 @@
 [Centos_servers]
 192.168.122.146
 
+[localhost]
+192.168.122.102

@@ -51,14 +51,32 @@
       name: httpd
       enabled: yes
       masked: no
+    register: httpd_running
+
+  - name: change e-mail addres for admin
+    tags: centos_servers,centos_apps
+    lineinfile:
+      path: /etc/httpd/conf/httpd.conf
+      regexp: '^ServerAdmin r'
+      line: ServerAdmin somebody@somewhere.net
+    register: httpd
+
+  - name: restart httpd
+    tags: centos_servers,centos_apps
+    service:
+      name: httpd
+      state: restarted
+    when: httpd.changed
 
   - name: open firewall
     tags: centos_servers,centos_apps
     shell: firewall-cmd --add-service=http --permanent
+    when: httpd_running.changed
 
   - name: restart firewall
     tags: centos_servers,centos_apps
     shell: firewall-cmd --reload
+    when: httpd_running.changed
 
   - name: install htop for CentOS servers
     tags: centos_servers,centos_apps
