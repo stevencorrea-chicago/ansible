@@ -53,7 +53,7 @@
       masked: no
     register: httpd_running
 
-  - name: change e-mail addres for admin
+  - name: change e-mail address for admin
     tags: centos_servers,centos_apps
     lineinfile:
       path: /etc/httpd/conf/httpd.conf
