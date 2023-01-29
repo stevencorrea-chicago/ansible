@@ -1,0 +1,9 @@
+- name: install apache2, php, tree, htop for Ubuntu servers
+  tags: ubuntu_servers,ubuntu_apps
+  apt:
+    name:
+      - apache2
+      - libapache2-mod-php
+      - tree
+      - htop
+    state: latest
