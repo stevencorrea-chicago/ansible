@@ -1,0 +1,48 @@
+---
+
+- hosts: all
+  become: true
+  pre_tasks:
+  - name: update repository index (CentOS)
+    tags: always
+    yum:
+      update_cache: yes
+    changed_when: false
+    when: ansible_distribution == "CentOS"
+
+  - name: update repository index (Ubuntu)
+    tags: always
+    apt:
+      update_cache: yes
+    changed_when: false
+    when: ansible_distribution == "Ubuntu"
+
+- hosts: base
+  tags: base
+  become: true
+  roles:
+    - base
+
+- hosts: ubuntu_servers
+  tags: ubuntu_servers
+  become: true
+  roles:
+    - ubuntu_servers
+
+- hosts: centos_servers
+  tags: centos_servers
+  become: true
+  roles:
+    - centos_servers
+
+- hosts: web_servers
+  tags: web_servers
+  become: true
+  roles:
+    - web_servers
+
+- hosts: localhost
+  tags: localhost
+  become: true
+  roles:
+    - localhost
