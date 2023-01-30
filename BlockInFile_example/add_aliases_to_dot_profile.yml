@@ -1,0 +1,19 @@
+---
+
+- hosts: all
+  become: true
+  pre_tasks:
+  - name: modify .profile
+    tags: always
+    ansible.builtin.blockinfile:
+      path: /home/simone/.bashrc
+      create: true
+      marker: "# {mark} ANSIBLE MANAGED BLOCK"
+      marker_begin: "BEGIN"
+      marker_end: "END"
+      block: |
+        alias c='clear'
+        alias l.='ls -d .* --color-auto'
+        alias mkdir='mkdir -pv'
+
+
