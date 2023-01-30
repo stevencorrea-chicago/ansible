@@ -1,0 +1,117 @@
+---
+
+- hosts: all
+  become: true
+  pre_tasks:
+  - name: update cache (CentOS)
+    tags: always
+    yum:
+      update_cache: yes
+    changed_when: false
+    when: ansible_distribution == "CentOS"
+
+  - name: update cache (Ubuntu)
+    tags: always
+    apt:
+      update_cache: yes
+    changed_when: false
+    when: ansible_distribution == "Ubuntu"
+
+  - name: add ssh key for simone
+    tags: always
+    authorized_key:
+      user: simone
+      key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOrAtnQj63nxftWl7+NHuSUT0Lf6ApcWRRZwRdYO2yrj ansible"
+# Test
+- hosts: Ubuntu_servers
+  become: true
+  tasks:
+  - name: install apache2, php, tree, htop for Ubuntu servers
+    tags: ubuntu_servers,ubuntu_apps
+    apt:
+      name:
+        - apache2
+        - libapache2-mod-php
+        - tree
+        - htop
+      state: latest
+      update_cache: yes
+
+- hosts: Centos_servers
+  become: true
+  tasks:
+  - name: install apache, php, tree, epel-release for CentOS servers
+    tags: centos_servers,centos_apps
+    yum:
+      name:
+        - httpd
+        - php
+        - tree
+        - epel-release
+      state: latest
+
+  - name: make sure httpd service is running
+    tags: centos_servers,centos_apps
+    ansible.builtin.systemd:
+      state: started
+      name: httpd
+      enabled: yes
+      masked: no
+    register: httpd_running
+
+  - name: change e-mail address for admin
+    tags: centos_servers,centos_apps
+    lineinfile:
+      path: /etc/httpd/conf/httpd.conf
+      regexp: '^ServerAdmin r'
+      line: ServerAdmin somebody@somewhere.net
+    register: httpd
+
+  - name: restart httpd
+    tags: centos_servers,centos_apps
+    service:
+      name: httpd
+      state: restarted
+    when: httpd.changed
+
+  - name: open firewall
+    tags: centos_servers,centos_apps
+    shell: firewall-cmd --add-service=http --permanent
+    when: httpd_running.changed
+
+  - name: restart firewall
+    tags: centos_servers,centos_apps
+    shell: firewall-cmd --reload
+    when: httpd_running.changed
+
+  - name: install htop for CentOS servers
+    tags: centos_servers,centos_apps
+    yum:
+      name:
+        - htop
+      state: latest
+
+- hosts: all
+  become: true
+  tasks:
+  - name: copy default html file for site
+    tags: centos_servers,centos_apps
+    copy:
+      # The files directory is assumed. Look at ansible documenation to understand that assumption.
+      src: default_site.html
+      dest: /var/www/html/index.html
+      owner: root
+      group: root
+      mode: 0644
+
+- hosts: localhost
+  become: true
+  tasks:
+  - name: install terraform
+    unarchive:
+      src: https://releases.hashicorp.com/terraform/1.2.9/terraform_1.2.9_linux_amd64.zip
+      dest: /usr/local/bin
+      remote_src: yes
+      mode: 0755
+      owner: root
+      group: root
