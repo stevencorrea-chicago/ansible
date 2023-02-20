@@ -6,6 +6,8 @@ ansible all -m apt -a "name=snapd state=latest" --become --ask-become-pass
 ansible all -m apt -a "upgrade=dist" --become --ask-become-pass
 ansible-playbook --ask-become-pass install_apache.yml
 ansible-playbook --list-tags install_apps_targeted_servers.yml
+ansible-playbook --tags centos --ask-become-pass install_apps_targeted_servers.yml
+ansible-playbook --tags "googler,musikcube" --ask-become-pass install_apps_targeted_servers.yml
 ansible localhost -m gather_facts
 
 git status
