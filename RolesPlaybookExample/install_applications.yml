@@ -1,0 +1,21 @@
+---
+
+- hosts: all
+  become: true
+  pre_tasks:
+  - name: update repository index (RHEL)
+    tags: always
+    yum:
+      update_cache: true
+
+- hosts: jenkins_controller
+  tags: jenkins_controller
+  become: true
+  roles:
+    - jenkins_controller
+
+- hosts: jenkins_nodes
+  tags: jenkins_nodes
+  become: true
+  roles:
+    - jenkins_nodes

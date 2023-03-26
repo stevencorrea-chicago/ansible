@@ -1,0 +1,8 @@
+- name: install multiple applications on jenkins controllers
+  tags: centos_servers,centos_apps
+  yum:
+    name:
+      - openjdk-11-jdk
+      - itop
+    state: latest
+

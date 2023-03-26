@@ -1,0 +1,16 @@
+- name: install applications to configure a jenkins node
+  tags: jenkins_config
+  apt:
+    name:
+      - openjdk-11-jdk
+    state: latest
+
+- name: create simone user
+  tags: always
+  user:
+    name: jenkins
+    groups: jenkins
+    home: /opt/app/jenkins
+
+
+
