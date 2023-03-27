@@ -2,15 +2,16 @@
   tags: jenkins_config
   apt:
     name:
-      - openjdk-11-jdk
+      - "{{ jdk }}"
     state: latest
 
-- name: create simone user
+- name: create jenkins user
   tags: always
   user:
-    name: jenkins
-    groups: jenkins
-    home: /opt/app/jenkins
+    name: "{{ jenkins_username }}"
+    groups: "{{ jenkins_group }}"
+    shell: "{{ jenkins_shell }}"
+    home: "{{ jenkins_home_path }}"
 
 
 

@@ -1,0 +1,2 @@
+jdk: java-11-openjdk-amd64
+apache_service: httpd

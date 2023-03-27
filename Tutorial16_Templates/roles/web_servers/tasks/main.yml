@@ -1,0 +1,9 @@
+- name: copy default html file for site
+  tags: centos_servers,centos_apps
+  copy:
+    # The files directory is assumed. Look at ansible documenation to understand that assumption.
+    src: default_site.html
+    dest: /var/www/html/index.html
+    owner: root
+    group: root
+    mode: 0644

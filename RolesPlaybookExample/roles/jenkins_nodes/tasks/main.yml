@@ -1,8 +1,29 @@
-- name: install multiple applications on jenkins controllers
-  tags: centos_servers,centos_apps
-  yum:
+- name: install applications to configure a jenkins node
+  tags: jenkins_config
+  apt:
     name:
-      - openjdk-11-jdk
-      - itop
+      - "{{ jdk }}"
     state: latest
+
+- name: create jenkins user
+  tags: jenkins_user
+  user:
+    name: jenkins
+    groups: jenkins
+    home: "{{ jenkins_home_directory }}"
+
+# Example for handler.
+# A handler will execute a task based on some other task
+# For example, a change was made to a config file which will 
+# require a restart of a service.
+# For example, changing the email address in the httpd.conf
+# file for admin. 
+
+- name: change admin email address
+  tags: apache
+  lineinfile:
+    path: /etc/httpd/conf/httpd.conf
+    regexp: '^ServerAdmin'
+    line: ServerAdmin newadmin@att.com
+  notify: restart_apache
 

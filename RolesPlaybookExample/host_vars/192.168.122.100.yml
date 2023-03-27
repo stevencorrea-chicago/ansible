@@ -1,0 +1,5 @@
+jdk: java-11-openjdk-amd64
+jenkins_username: jenkins
+jenkins_group: jenkins
+jenkins_shell: /bin/bash
+jenkins_home_path: /opt/app/jenkins

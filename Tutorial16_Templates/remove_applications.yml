@@ -1,0 +1,51 @@
+---
+
+- hosts: all
+  become: true
+  pre_tasks:
+  - name: install updates (CentOS)
+    tags: always
+    yum:
+      update_only: yes
+      update_cache: yes
+    when: ansible_distribution == "CentOS"
+
+  - name: install updates (Ubuntu)
+    tags: always
+    apt:
+      upgrade: dist
+      update_cache: yes
+    when: ansible_distribution == "Ubuntu"
+
+- hosts: ubuntu_servers
+  become: true
+  tasks:
+  - name: remove apache2, php, tree, htop for Ubuntu servers
+    tags: ubuntu_servers,ubuntu_apps
+    apt:
+      name:
+        - apache2
+        - libapache2-mod-php
+        - tree
+        - htop
+      state: absent
+
+- hosts: centos_servers
+  become: true
+  tasks:
+  - name: remove apache, php, tree, epel-release for CentOS servers
+    tags: centos_servers,centos_apps
+    yum:
+      name:
+        - httpd
+        - php
+        - tree
+        - epel-release
+      state: absent
+
+  - name: remove htop for CentOS servers
+    tags: centos_servers,centos_apps
+    yum:
+      name:
+        - htop
+      state: absent
